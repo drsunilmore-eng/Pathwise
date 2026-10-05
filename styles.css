@@ -96,3 +96,43 @@ footer{padding:60px 6vw;text-align:center;border-top:1px solid var(--line)}foote
 #pathologist .bio-copy h3{font-size:40px;margin-bottom:10px}
 #pathologist .bio-copy p{font-size:17px;line-height:1.58;margin:12px 0}
 @media(max-width:900px){#pathologist{padding-top:28px;padding-bottom:40px}#pathologist .bio{grid-template-columns:1fr;gap:28px}#pathologist .pathologist-photo{max-width:320px}}
+
+/* Compose each desktop topic within the viewport below the sticky header. */
+.screen-content{display:contents}
+@media (min-width:1024px) and (hover:hover) and (pointer:fine){
+  html{scroll-padding-top:86px;scroll-snap-type:y proximity}
+  .splash{scroll-snap-align:start}
+  main>.section,.contact-screen{
+    min-height:calc(100svh - 86px);
+    scroll-snap-align:start;
+    scroll-snap-stop:normal;
+    scroll-margin-top:0;
+  }
+  main>.section{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding-block:clamp(32px,5svh,64px);
+  }
+  .screen-content{display:block;width:100%;max-width:1280px;margin-inline:auto}
+  .site-header nav{gap:clamp(6px,1.3vw,22px)}
+  .site-header nav a{padding-inline:8px}
+  .brand img{width:clamp(180px,16vw,220px)}
+  .hero h1{font-size:clamp(52px,min(6.2vw,11svh),92px);margin-block:20px 24px}
+  .lead{margin-bottom:28px}
+  .credential-strip{margin-top:clamp(28px,5svh,64px);padding-top:24px}
+  .section-heading{margin-bottom:clamp(24px,4svh,42px)}
+  .flyer-workflow{width:100%;margin-top:0;padding-block:24px 10px}
+  .submit-section .screen-content{display:grid;grid-template-columns:1fr auto;gap:50px;align-items:center}
+  #pathologist{padding-block:clamp(28px,4svh,54px);scroll-margin-top:0}
+  #pathologist .section-heading{margin-bottom:24px}
+  #pathologist .bio{grid-template-columns:minmax(220px,min(340px,42svh)) 1fr;gap:clamp(32px,4vw,65px)}
+  #pathologist .pathologist-photo{max-width:340px}
+  #faq .faq-item summary{padding-block:clamp(18px,2.8svh,25px)}
+  .contact-screen{display:flex;flex-direction:column;justify-content:center}
+  .contact-screen .section{padding-block:clamp(32px,5svh,60px);scroll-margin-top:0}
+  .contact-screen footer{padding-block:clamp(24px,4svh,48px)}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;scroll-snap-type:none}
+}
