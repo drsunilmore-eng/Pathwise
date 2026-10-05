@@ -69,7 +69,7 @@ footer{padding:60px 6vw;text-align:center;border-top:1px solid var(--line)}foote
   transform-origin:center;
 }
 @media(max-width:600px){
-  .workflow-arrow{transform:none;rotate:90deg}
+  .workflow-arrow,.workflow-arrow:nth-of-type(2){display:block;width:62px;height:48px;flex:0 0 48px;transform:none;rotate:90deg}
 }
 
 
