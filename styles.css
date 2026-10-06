@@ -181,3 +181,24 @@ html.paging-ready{scroll-behavior:auto;scroll-snap-type:none}
  .splash-center{width:min(74vw,110svh);transform:none}
  .splash-illustration{width:min(48vw,48svh)}
 }
+
+
+/* Single-column actions and a compact, numbered mobile workflow. */
+@media(max-width:900px){
+  #home{padding-block:12px}
+  #home h1{margin-block:8px 12px}
+  #home .lead{margin-bottom:12px}
+  .hero-actions{grid-template-columns:1fr;gap:8px}
+}
+@media(max-width:600px){
+  #how .section-heading{margin-bottom:20px}
+  .flyer-workflow{display:grid;grid-template-columns:1fr;gap:16px;margin:0;padding:8px 0}
+  .workflow-step,.workflow-step:nth-of-type(3),.workflow-step:nth-of-type(4){grid-column:auto;width:100%;margin:0;display:grid;grid-template-columns:88px minmax(0,1fr);gap:0 16px;text-align:left;align-items:center}
+  .workflow-arrow,.workflow-arrow:nth-of-type(2){display:none}
+  .workflow-art{grid-column:1;grid-row:1 / span 2;width:88px;height:88px;margin:0}
+  .workflow-art .icon-monitor{scale:.72;translate:0 -8px}
+  .workflow-art .icon-report{scale:.85}
+  .step-number{position:absolute;left:0;top:-6px;width:28px;height:28px;margin:0}
+  .workflow-label{grid-column:2;grid-row:1;min-height:0;align-self:end}
+  .workflow-copy{grid-column:2;grid-row:2;max-width:100%;margin:6px 0 0;align-self:start}
+}

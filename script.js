@@ -22,6 +22,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   root.classList.add('paging-ready');
   let animation = null;
+  let momentum = null;
   let cleanupFlight = () => {};
   let wheelTimer;
   let wheelLatched = false;
@@ -44,7 +45,12 @@ document.getElementById('year').textContent = new Date().getFullYear();
     root.classList.toggle('has-header', visible);
     header.inert = !visible && !animation;
   };
+  const cancelMomentum = () => {
+    momentum?.pause();
+    momentum = null;
+  };
   const cancel = () => {
+    cancelMomentum();
     animation?.pause();
     animation = null;
     cleanupFlight();
@@ -131,6 +137,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
     if (destination !== index) moveTo(stop(topics[destination]));
   };
   window.addEventListener('wheel', event => {
+    cancelMomentum();
     if (event.ctrlKey || Math.abs(event.deltaX)>Math.abs(event.deltaY) || blocked(event.target)) return;
     event.preventDefault();
     clearTimeout(wheelTimer);
@@ -149,11 +156,13 @@ document.getElementById('year').textContent = new Date().getFullYear();
     if (Math.abs(wheelDistance)>=30) { wheelLatched=true; step(Math.sign(wheelDistance)); }
   }, { passive:false });
   window.addEventListener('touchstart', event => {
+    cancelMomentum();
     if (event.touches.length!==1 || blocked(event.target)) { touch=null; return; }
     const point=event.touches[0];
     const index=currentIndex();
     touch={x:point.clientX,y:point.clientY,last:point.clientY,index,
-      start:stop(topics[index]),end:readingEnd(index),reading:false,done:false};
+      start:stop(topics[index]),end:readingEnd(index),reading:false,done:false,
+      velocity:0,lastTime:performance.now()};
   }, { passive:true });
   window.addEventListener('touchmove', event => {
     if (!touch || event.touches.length!==1) return;
@@ -163,13 +172,35 @@ document.getElementById('year').textContent = new Date().getFullYear();
     event.preventDefault();
     if (animation || touch.done) return;
     const delta=touch.last-point.clientY;
+    const now=performance.now();
+    const elapsed=Math.max(8,now-touch.lastTime);
+    touch.velocity=0.7*(delta/elapsed)+0.3*touch.velocity;
+    touch.lastTime=now;
     touch.last=point.clientY;
     if (touch.reading || (dy>0 && scrollY<touch.end-3) || (dy<0 && scrollY>touch.start+3)) {
       touch.reading=true;
       window.scrollTo(0,Math.max(touch.start,Math.min(touch.end,scrollY+delta)));
     } else if (Math.abs(dy)>=40) { touch.done=true; step(Math.sign(dy)); }
   }, { passive:false });
-  window.addEventListener('touchend',()=>{touch=null;},{passive:true});
+  const coast = gesture => {
+    if (!gesture?.reading || reducedMotion.matches || animation ||
+        performance.now()-gesture.lastTime>100 || Math.abs(gesture.velocity)<0.08) return;
+    const velocity=Math.max(-2.5,Math.min(2.5,gesture.velocity));
+    const duration=Math.max(200,Math.min(350,200+Math.abs(velocity)*60));
+    const start=stop(topics[gesture.index]),end=readingEnd(gesture.index);
+    const destination=Math.max(start,Math.min(end,scrollY+velocity*duration/3));
+    if (Math.abs(destination-scrollY)<2) return;
+    const position={y:scrollY};
+    momentum=window.anime.animate(position,{
+      y:destination,duration,ease:'outCubic',
+      onRender:()=>window.scrollTo(0,Math.max(start,Math.min(end,position.y))),
+      onComplete:()=>{momentum=null;}
+    });
+  };
+  window.addEventListener('touchend',event=>{
+    if(event.touches.length) return;
+    const gesture=touch;touch=null;coast(gesture);
+  },{passive:true});
   window.addEventListener('touchcancel',()=>{touch=null;},{passive:true});
   window.addEventListener('keydown', event => {
     if (blocked(event.target) || event.altKey || event.ctrlKey || event.metaKey ||
@@ -178,6 +209,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
       ['ArrowUp','PageUp'].includes(event.key) ? -1 : 0;
     if (!direction && !['Home','End'].includes(event.key)) return;
     event.preventDefault();
+    cancelMomentum();
     if (animation) return;
     if (event.key==='Home') { moveTo(0); return; }
     if (event.key==='End') { moveTo(stop(topics[topics.length-1])); return; }
