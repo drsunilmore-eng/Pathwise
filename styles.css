@@ -164,3 +164,20 @@ main>.section{display:flex;flex-direction:column;justify-content:center}
   #pathologist .pathologist-photo{width:clamp(96px,24vw,140px);max-width:140px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto;scroll-snap-type:none}}
+
+
+/* The launch artwork becomes the fixed navigation without an in-flow banner. */
+html.paging-ready{scroll-behavior:auto;scroll-snap-type:none}
+.paging-ready .site-header{position:fixed;inset:0 0 auto;opacity:0;visibility:hidden;pointer-events:none}
+.paging-ready.has-header .site-header,.paging-ready.header-transition .site-header{opacity:1;visibility:visible;pointer-events:auto}
+.paging-ready.header-transition .site-header .brand img{visibility:hidden}
+.paging-ready.header-transition .site-header{background:rgba(255,255,255,var(--header-opacity,0));border-color:transparent;backdrop-filter:none}
+.paging-ready.header-transition .site-header nav,.paging-ready.header-transition .menu-button{opacity:var(--nav-opacity,0);transform:translateY(calc((1 - var(--nav-opacity,0))* -10px))}
+.launch-logo-flight,.launch-explore-flight{position:fixed;z-index:30;pointer-events:none;transform-origin:top left;will-change:transform,opacity}
+.launch-logo-flight{object-fit:contain}
+.launch-explore-flight{white-space:nowrap;margin:0}
+.paging-ready .splash{height:100svh;min-height:100svh}
+@media(max-height:500px) and (orientation:landscape){
+ .splash-center{width:min(74vw,110svh);transform:none}
+ .splash-illustration{width:min(48vw,48svh)}
+}
