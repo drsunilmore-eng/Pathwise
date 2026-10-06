@@ -43,7 +43,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
     userScrolling = false;
     const finish = () => {
       animation = null;
-      suppressedUntil = performance.now() + 200;
+      suppressedUntil = performance.now() + 60;
       if (focusTarget) {
         focusTarget.setAttribute('tabindex', '-1');
         focusTarget.focus({ preventScroll: true });
@@ -56,7 +56,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
     }
     const position = { y: window.scrollY };
     animation = window.anime.animate(position, {
-      y, duration: 350, ease: 'outCubic',
+      y, duration: 180, ease: 'outCubic',
       onRender: () => window.scrollTo(0, position.y),
       onComplete: finish
     });
@@ -79,16 +79,17 @@ document.getElementById('year').textContent = new Date().getFullYear();
     if (insideLongTopic) return;
     const closest = topics.map(targetY).reduce((best, stop) =>
       Math.abs(stop - y) < Math.abs(best - y) ? stop : best);
-    if (Math.abs(closest - y) > 2 && Math.abs(closest - y) <= height * 0.2) moveTo(closest);
+    if (Math.abs(closest - y) > 2 && Math.abs(closest - y) <= height * 0.5) moveTo(closest);
   };
   const markInput = () => {
     stopAnimation();
+    suppressedUntil = 0;
     userScrolling = true;
   };
   window.addEventListener('wheel', markInput, { passive: true });
   window.addEventListener('pointerdown', markInput, { passive: true });
   window.addEventListener('touchstart', () => { touching = true; markInput(); }, { passive: true });
-  const endTouch = () => { touching = false; idleTimer = window.setTimeout(settle, 180); };
+  const endTouch = () => { touching = false; idleTimer = window.setTimeout(settle, 60); };
   window.addEventListener('touchend', endTouch, { passive: true });
   window.addEventListener('touchcancel', endTouch, { passive: true });
   window.addEventListener('keydown', () => suppress(), { passive: true });
@@ -97,7 +98,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
   window.addEventListener('scroll', () => {
     if (!userScrolling || animation) return;
     window.clearTimeout(idleTimer);
-    idleTimer = window.setTimeout(settle, 180);
+    idleTimer = window.setTimeout(settle, 60);
   }, { passive: true });
   window.addEventListener('scrollend', settle, { passive: true });
 
