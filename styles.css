@@ -100,7 +100,7 @@ footer{padding:60px 6vw;text-align:center;border-top:1px solid var(--line)}foote
 /* Compose each desktop topic within the viewport below the sticky header. */
 .screen-content{display:contents}
 @media (min-width:1024px) and (hover:hover) and (pointer:fine){
-  html{scroll-padding-top:86px;scroll-snap-type:y proximity}
+  html{scroll-padding-top:86px}
   .splash{scroll-snap-align:start}
   main>.section,.contact-screen{
     min-height:calc(100svh - 86px);
@@ -138,3 +138,59 @@ footer{padding:60px 6vw;text-align:center;border-top:1px solid var(--line)}foote
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto;scroll-snap-type:none}
 }
+
+
+/* Topic pages grow naturally when their content exceeds the viewport. */
+:root{--header-height:86px}
+html{scroll-padding-top:var(--header-height)}
+.explore{z-index:2}
+html.scroll-settling{scroll-behavior:auto;scroll-snap-type:none}
+.splash{min-height:100svh;height:auto}
+main>.section,.contact-screen{min-height:calc(100svh - var(--header-height));scroll-margin-top:0}
+main>.section{display:flex;flex-direction:column;justify-content:center}
+.screen-content{display:block;width:100%;max-width:1280px;margin-inline:auto}
+.contact-screen{display:flex;flex-direction:column;justify-content:center}
+#contact{min-height:0;scroll-margin-top:0}
+@media(max-width:900px){
+  :root{--header-height:72px}
+  .section{padding:32px 24px}
+  .section-heading{margin-bottom:24px}
+  .submit-section .screen-content{display:grid;gap:24px}
+  .submit-section .button{justify-self:start}
+  #pathologist{padding-block:24px}
+  #pathologist .bio{grid-template-columns:clamp(96px,24vw,140px) minmax(0,1fr);gap:16px;align-items:center}
+  #pathologist .pathologist-photo{width:100%;max-width:140px}
+  #pathologist .bio-copy{display:contents}
+  #pathologist .bio-copy>p{grid-column:1 / -1;margin:0}
+  #pathologist .bio-copy h3{font-size:clamp(24px,4vw,32px);margin-bottom:8px}
+  #pathologist .bio-copy p{font-size:16px;line-height:1.5}
+  #pathologist .bio-copy .credentials{margin:0;font-size:16px}
+  .contact-screen footer{padding-block:24px}
+}
+@media(max-width:600px){
+  .section{padding:24px 20px}
+  .section-heading h2,#pathologist .section-heading h2{font-size:clamp(28px,7.5vw,32px);line-height:1.08}
+  .hero h1{font-size:clamp(40px,10vw,49px);margin:18px 0 22px}
+  .hero .lead{font-size:17px;margin-bottom:24px}
+  .hero-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .hero-action{min-height:58px}
+  .submit-section h2{font-size:clamp(32px,8vw,42px)}
+  .flyer-workflow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 12px;margin:0;padding:8px 0}
+  .workflow-step,.workflow-step:nth-of-type(3),.workflow-step:nth-of-type(4){grid-column:auto;width:100%;margin:0}
+  .workflow-arrow,.workflow-arrow:nth-of-type(2){display:none}
+  .workflow-art{width:110px;height:110px;margin-bottom:12px}
+  .workflow-label{font-size:14px;line-height:1.25}
+  .workflow-copy{font-size:14px}
+  .workflow-label,.workflow-copy{overflow-wrap:anywhere}
+  .contact-card{padding:24px 20px}
+  .contact-card strong{overflow-wrap:anywhere}
+  .contact-screen footer img{max-width:180px;width:100%}
+}
+@media(max-width:359px){
+  .hero-actions{grid-template-columns:1fr}
+  .flyer-workflow{display:flex;flex-direction:column;gap:0}
+  .workflow-step{margin:4px 0}
+  .workflow-arrow,.workflow-arrow:nth-of-type(2){display:block}
+  #pathologist .bio-copy h3{font-size:23px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto;scroll-snap-type:none}}
