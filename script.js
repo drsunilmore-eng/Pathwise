@@ -25,7 +25,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
     threshold: 10,
     freshPause: 80,
     accelerationDelay: 160,
-    minimumFreshDelta: 12,
+    minimumFreshDelta: 1,
     accelerationRatio: 1.6
   });
   root.classList.add('paging-ready');
@@ -194,8 +194,9 @@ document.getElementById('year').textContent = new Date().getFullYear();
     const direction = Math.sign(delta);
     const magnitude = Math.abs(delta);
     // Accept fresh notches or renewed trackpad motion; ignore a decaying inertia tail.
-    const freshGesture = direction !== previousWheelDirection ||
-      (now - previousWheelTime > wheelOptions.freshPause && magnitude >= Math.max(8, Math.abs(previousWheelDelta) * 0.95)) ||
+    const directionChanged = direction !== previousWheelDirection;
+    const freshGesture = directionChanged ||
+      (now - previousWheelTime > wheelOptions.freshPause && magnitude >= Math.abs(previousWheelDelta) * 0.95) ||
       (now - wheelGestureStarted > wheelOptions.accelerationDelay && magnitude >= wheelOptions.minimumFreshDelta && magnitude > Math.abs(previousWheelDelta) * wheelOptions.accelerationRatio);
     previousWheelTime = now;
     previousWheelDelta = delta;
@@ -206,19 +207,20 @@ document.getElementById('year').textContent = new Date().getFullYear();
       wheelDistance = 0;
     }, timings.wheelIdle);
     if (freshGesture) {
+      // Preserve accumulated gentle input once a new gesture has been accepted.
+      if (wheelLatched || directionChanged) wheelDistance = 0;
       wheelLatched = false;
-      wheelDistance = 0;
       wheelGestureStarted = now;
     }
+    if (wheelLatched) return;
     if (animation) {
-      wheelLatched = true;
-      if (freshGesture) {
-        queuedWheelDirection = direction;
+      wheelDistance += delta;
+      if (Math.abs(wheelDistance) >= wheelOptions.threshold) {
+        queuedWheelDirection = Math.sign(wheelDistance);
         wheelLatched = true;
       }
       return;
     }
-    if (wheelLatched) return;
 
     const index = currentIndex();
     const start = stop(topics[index]);
@@ -235,7 +237,8 @@ document.getElementById('year').textContent = new Date().getFullYear();
       step(Math.sign(wheelDistance));
     }
   }, {
-    passive: false
+    passive: false,
+    capture: true
   });
   window.addEventListener('touchstart', event => {
     cancelMomentum();
